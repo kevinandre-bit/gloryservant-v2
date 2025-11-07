@@ -1,0 +1,9 @@
+.online-indicator,
+.offline-indicator { display: inline-block; width: 12px; height: 12px; margin-left: 6px; border-radius: 50%; vertical-align: middle; }
+.online-indicator { background-color: #4ac96c; }
+.offline-indicator { background-color: gray; }
+
+/* volunteers portal helpers */
+.portal-logo {
+  width: 30%;
+}

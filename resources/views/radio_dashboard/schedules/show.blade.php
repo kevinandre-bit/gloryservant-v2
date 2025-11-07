@@ -1,0 +1,1 @@
+<h1>Programming — Batch Detail: {{ $batch }}</h1>

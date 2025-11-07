@@ -1,0 +1,10 @@
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    # Force all traffic to the public/ directory if the vhost docroot
+    # is incorrectly set to the project root.
+    RewriteCond %{REQUEST_URI} !^/public/
+    RewriteRule ^(.*)$ public/$1 [L,NC]
+</IfModule>
+
+# Disable directory listing as a defense-in-depth measure
+Options -Indexes

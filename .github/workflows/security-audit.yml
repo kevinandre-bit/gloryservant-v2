@@ -1,0 +1,60 @@
+name: Security Audit
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  schedule:
+    - cron: '0 5 * * 1'  # weekly Monday 05:00 UTC
+
+jobs:
+  composer-audit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          tools: composer
+          coverage: none
+
+      - name: Validate composer.json
+        run: composer validate --no-interaction --strict
+
+      - name: Install dependencies (no scripts)
+        run: composer install --no-interaction --no-progress --prefer-dist --no-scripts
+
+      - name: Audit dependencies
+        run: composer audit --no-interaction
+
+  csp-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Enforce no inline scripts in auth views
+        run: .github/csp-lint.sh
+
+  csp-lint-all:
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Report CSP issues across all views (non-blocking)
+        run: .github/csp-lint-all.sh
+
+  vendor-check:
+    runs-on: ubuntu-latest
+    env:
+      ASSET_USE_CDN: ${{ vars.ASSET_USE_CDN || 'true' }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Verify local vendor files when self-hosting
+        run: .github/check-vendor.sh
