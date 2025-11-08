@@ -110,7 +110,10 @@ class CreativeController extends Controller
             $pointsService->awardTaskPoints($taskId, $user->reference);
         }
         
-        return back()->with('success', 'Task status updated');
+    if (request()->expectsJson()) {
+            return response()->json(['success' => true]);
+        }
+     return back()->with('success', 'Task status updated');
     }
     
     public function show($taskId)
